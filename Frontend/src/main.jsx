@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { WebSocketProvider } from "./context/WebSocketContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
+import { ConfirmProvider } from "./context/ConfirmContext.jsx";
 import "./index.css";
 import "./App.css";
 
@@ -12,7 +13,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <ThemeProvider>
             <AuthProvider>
                 <WebSocketProvider>
-                    <App />
+                    <ConfirmProvider>
+                        <App />
+                    </ConfirmProvider>
                 </WebSocketProvider>
             </AuthProvider>
         </ThemeProvider>

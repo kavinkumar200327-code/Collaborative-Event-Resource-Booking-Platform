@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import QRCode from "qrcode";
 import { useAuth } from "../../context/AuthContext";
+import { useConfirm } from "../../context/ConfirmContext";
 import registrationApi from "../../api/registrationApi";
 import bookingApi from "../../api/bookingApi";
 import eventApi from "../../api/eventApi";
@@ -22,6 +23,7 @@ import {
 
 export default function MyRegistrations() {
     const { user } = useAuth();
+    const confirm = useConfirm();
 
     const [activeTab, setActiveTab] = useState("registrations"); // "registrations" | "bookings"
     const [registrations, setRegistrations] = useState([]);
@@ -124,9 +126,14 @@ export default function MyRegistrations() {
 
     // Cancel Registration
     const handleCancel = async (id) => {
-        const confirmed = window.confirm(
-            "Are you sure you want to cancel this registration? If there is a waitlist, the next attendee in queue will be promoted automatically."
-        );
+        const confirmed = await confirm({
+            title: "Cancel Event Registration?",
+            message: "Are you sure you want to cancel this registration? If there is a waitlist, the next attendee in queue will be promoted automatically.",
+            confirmText: "Yes, Cancel Registration",
+            cancelText: "Keep My Pass",
+            variant: "danger",
+            notice: "This action will immediately invalidate your digital QR pass and revoke your reserved seat.",
+        });
         if (!confirmed) return;
 
         try {

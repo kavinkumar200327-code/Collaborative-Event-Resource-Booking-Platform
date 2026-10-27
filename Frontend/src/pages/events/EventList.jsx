@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useConfirm } from "../../context/ConfirmContext";
 import {
     Calendar,
     MapPin,
@@ -31,6 +32,7 @@ import "./events.css";
 
 export default function EventList() {
     const { user } = useAuth();
+    const confirm = useConfirm();
     const { organizationId } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -193,9 +195,13 @@ export default function EventList() {
         const label = actionLabels[action];
         if (!label) return;
 
-        const confirmed = window.confirm(
-            `Are you sure you want to ${label} "${eventItem.title || eventItem.name}"?`
-        );
+        const confirmed = await confirm({
+            title: `${label.charAt(0).toUpperCase() + label.slice(1)} Event?`,
+            message: `Are you sure you want to ${label} "${eventItem.title || eventItem.name}"?`,
+            confirmText: `Yes, ${label.charAt(0).toUpperCase() + label.slice(1)}`,
+            cancelText: "Cancel",
+            variant: action === "cancel" ? "danger" : "info",
+        });
         if (!confirmed) return;
 
         try {
@@ -223,9 +229,14 @@ export default function EventList() {
     };
 
     const handleDelete = async (eventItem) => {
-        const confirmed = window.confirm(
-            `Are you sure you want to permanently delete "${eventItem.title || eventItem.name}"?`
-        );
+        const confirmed = await confirm({
+            title: "Delete Event Permanently?",
+            message: `Are you sure you want to permanently delete "${eventItem.title || eventItem.name}"? This will delete all registrations, sessions, and bookings associated with this event.`,
+            confirmText: "Delete Event",
+            cancelText: "Keep Event",
+            variant: "danger",
+            notice: "This operation is irreversible.",
+        });
         if (!confirmed) return;
 
         try {

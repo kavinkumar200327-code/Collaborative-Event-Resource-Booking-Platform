@@ -28,11 +28,13 @@ import {
 import organizationApi from "../../api/organizationApi";
 import eventApi from "../../api/eventApi";
 import bookingApi from "../../api/bookingApi";
+import { useConfirm } from "../../context/ConfirmContext";
 import "./organizations.css";
 
 export default function OrganizationDetails() {
     const navigate = useNavigate();
     const { organizationId } = useParams();
+    const confirm = useConfirm();
 
     // Data States
     const [organization, setOrganization] = useState(null);
@@ -162,9 +164,14 @@ export default function OrganizationDetails() {
 
     const handleDelete = async () => {
         if (!organization) return;
-        const confirmed = window.confirm(
-            `Are you sure you want to delete "${organization.name}"? This action permanently purges workspace isolation and associated data.`
-        );
+        const confirmed = await confirm({
+            title: "Delete Organization?",
+            message: `Are you sure you want to delete "${organization.name}"? This action permanently purges workspace isolation and associated data.`,
+            confirmText: "Delete Workspace",
+            cancelText: "Keep Workspace",
+            variant: "danger",
+            notice: "This operation cannot be reversed.",
+        });
         if (!confirmed) return;
 
         try {
@@ -268,7 +275,13 @@ export default function OrganizationDetails() {
             return;
         }
 
-        const confirmed = window.confirm("Are you sure you want to remove this member from the organization?");
+        const confirmed = await confirm({
+            title: "Remove Workspace Member?",
+            message: `Are you sure you want to remove ${targetMember.user?.email || targetMember.user?.name || "this member"} from the organization? They will immediately lose access to internal events and assigned roles.`,
+            confirmText: "Remove Member",
+            cancelText: "Keep Member",
+            variant: "danger",
+        });
         if (!confirmed) return;
 
         try {
@@ -299,7 +312,13 @@ export default function OrganizationDetails() {
     };
 
     const handleCancelEvent = async (eventId, eventTitle) => {
-        const confirmed = window.confirm(`Are you sure you want to cancel the event "${eventTitle}"?`);
+        const confirmed = await confirm({
+            title: "Cancel Event?",
+            message: `Are you sure you want to cancel the event "${eventTitle}"? All active registrations and attendees will be marked as cancelled.`,
+            confirmText: "Yes, Cancel Event",
+            cancelText: "Keep Event Active",
+            variant: "danger",
+        });
         if (!confirmed) return;
 
         try {

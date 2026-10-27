@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useConfirm } from "../../context/ConfirmContext";
 import {
     Building2,
     Plus,
@@ -23,6 +24,7 @@ import "./organizations.css";
 
 export default function OrganizationList() {
     const { isSuperAdmin, isOrgAdmin } = useAuth();
+    const confirm = useConfirm();
     const isAdmin = isSuperAdmin || isOrgAdmin;
 
     const [organizations, setOrganizations] = useState([]);
@@ -106,9 +108,14 @@ export default function OrganizationList() {
     }, [organizations, total]);
 
     const handleDelete = async (organization) => {
-        const confirmed = window.confirm(
-            `Are you sure you want to delete "${organization.name}"? This action cannot be undone.`
-        );
+        const confirmed = await confirm({
+            title: "Delete Organization?",
+            message: `Are you sure you want to permanently delete "${organization.name}"? This action will remove the organization and its associated resources.`,
+            confirmText: "Delete Organization",
+            cancelText: "Keep Organization",
+            variant: "danger",
+            notice: "This operation is irreversible.",
+        });
 
         if (!confirmed) return;
 
