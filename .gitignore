@@ -1,0 +1,42 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Pytest cache & test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node.js dependencies & builds
+node_modules/
+Frontend/node_modules/
+Frontend/dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local environment configuration (keep examples)
+.env
+Backend/.env
+Frontend/.env
+!.env.example
+!Backend/.env.example
+!Frontend/.env.example
+
+# User uploads runtime directory (keep placeholder)
+Backend/uploads/*
+!Backend/uploads/.gitkeep
+
+# Operating system & Editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
